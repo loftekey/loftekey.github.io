@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>电子玫瑰经（本地版）</title>
+    <style>
+      :root {
+        --bg: #0b1220;
+        --text: #e9eefc;
+        --muted: #b8c1e6;
+        --border: rgba(255, 255, 255, 0.12);
+        --shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+        --radius: 18px;
+
+        --btn-size: 140px;
+        --btn-color: #4c6fff;
+      }
+
+      html,
+      body {
+        height: 100%;
+        background: radial-gradient(
+            1200px 800px at 20% 10%,
+            rgba(76, 111, 255, 0.18),
+            transparent 60%
+          ),
+          radial-gradient(
+            1200px 800px at 80% 90%,
+            rgba(217, 108, 255, 0.14),
+            transparent 60%
+          ),
+          var(--bg);
+        color: var(--text);
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+          "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial,
+          sans-serif;
+      }
+
+      .wrap {
+        min-height: 100%;
+        display: grid;
+        place-items: center;
+        padding: 24px 14px;
+        box-sizing: border-box;
+      }
+
+      .frame {
+        width: min(560px, 92vw);
+        min-height: 420px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.06),
+          rgba(255, 255, 255, 0.03)
+        );
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+        padding: 18px;
+        box-sizing: border-box;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 6px 6px 12px 6px;
+      }
+
+      .title {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        line-height: 1.15;
+      }
+      .title h1 {
+        font-size: 16px;
+        margin: 0;
+        font-weight: 650;
+        letter-spacing: 0.2px;
+      }
+      .title .sub {
+        font-size: 12px;
+        color: var(--muted);
+        opacity: 0.95;
+      }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .icon-btn {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+        padding: 8px 10px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: transform 0.06s ease, background 0.2s ease,
+          border-color 0.2s ease;
+        user-select: none;
+      }
+      .icon-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.18);
+      }
+      .icon-btn:active {
+        transform: translateY(1px);
+      }
+
+      .center {
+        display: grid;
+        place-items: center;
+        padding: 28px 0 10px 0;
+      }
+
+      .rosary-btn {
+        width: var(--btn-size);
+        height: var(--btn-size);
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background: radial-gradient(
+            circle at 30% 25%,
+            rgba(255, 255, 255, 0.25),
+            transparent 35%
+          ),
+          radial-gradient(
+            circle at 55% 65%,
+            rgba(0, 0, 0, 0.25),
+            transparent 55%
+          ),
+          var(--btn-color);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45),
+          inset 0 0 0 6px rgba(255, 255, 255, 0.06);
+        cursor: pointer;
+        position: relative;
+        transition: transform 0.08s ease, filter 0.2s ease;
+        user-select: none;
+        outline: none;
+      }
+      .rosary-btn:hover {
+        filter: brightness(1.05);
+      }
+      .rosary-btn:active {
+        transform: translateY(2px) scale(0.99);
+      }
+
+      .rosary-btn .btn-label {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding: 14px;
+        box-sizing: border-box;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+        font-size: 14px;
+        line-height: 1.15;
+      }
+
+      .progress {
+        width: min(420px, 86%);
+        margin: 18px auto 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .progress .meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .bar {
+        height: 10px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.05);
+        overflow: hidden;
+      }
+      .bar > div {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.26),
+          rgba(255, 255, 255, 0.1)
+        );
+        border-right: 1px solid rgba(255, 255, 255, 0.22);
+        transition: width 0.22s ease;
+      }
+
+      /* 右下角位置区：支持单pill与双pill */
+      .pos {
+        position: absolute;
+        right: 14px;
+        bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        max-width: calc(100% - 28px);
+        z-index: 3;
+      }
+      .pill {
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.05);
+        padding: 10px 12px;
+        border-radius: 14px;
+        font-size: 12px;
+        color: var(--text);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+        cursor: default;
+        user-select: none;
+      }
+      .pill.clickable {
+        cursor: pointer;
+      }
+
+      /* Tooltip */
+      .tooltip {
+        position: absolute;
+        right: 14px;
+        bottom: 64px;
+        width: min(520px, calc(100% - 28px));
+        max-height: 240px;
+        border: 1px solid var(--border);
+        background: rgba(15, 27, 51, 0.92);
+        backdrop-filter: blur(10px);
+        border-radius: 14px;
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+        padding: 12px 12px 10px 12px;
+        box-sizing: border-box;
+        display: none;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 4;
+      }
+      .tooltip .tt-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+      }
+      .tooltip .tt-title {
+        font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 75%;
+      }
+      .tooltip .tt-pin {
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        font-size: 12px;
+        padding: 6px 10px;
+        border-radius: 12px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .tooltip .tt-body {
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--text);
+        overflow: auto;
+        padding-right: 4px;
+        white-space: pre-wrap;
+      }
+      .tooltip.show {
+        display: flex;
+      }
+
+      /* Modal（修复：使用 fixed，挂到 body，不受 frame 裁切） */
+      .modal-mask {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        padding: 16px;
+        box-sizing: border-box;
+      }
+      .modal-mask.show {
+        display: flex;
+      }
+      .modal {
+        width: min(780px, 100%);
+        max-height: min(90vh, 860px);
+        background: rgba(15, 27, 51, 0.96);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .modal .m-head {
+        padding: 14px 14px 10px 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        gap: 10px;
+        flex: 0 0 auto;
+      }
+      .modal .m-title {
+        font-weight: 700;
+        font-size: 14px;
+        margin: 0;
+      }
+      .modal .m-body {
+        padding: 12px 14px 14px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        overflow: auto;
+        flex: 1 1 auto;
+      }
+      textarea {
+        width: 100%;
+        min-height: 320px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        color: var(--text);
+        padding: 10px;
+        box-sizing: border-box;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        font-size: 12px;
+        line-height: 1.45;
+        outline: none;
+      }
+      .m-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        justify-content: flex-end;
+      }
+      .btn {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        padding: 9px 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: transform 0.06s ease, background 0.2s ease,
+          border-color 0.2s ease;
+        user-select: none;
+      }
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+      .btn:active {
+        transform: translateY(1px);
+      }
+      .btn.primary {
+        border-color: rgba(255, 255, 255, 0.22);
+        background: rgba(76, 111, 255, 0.22);
+      }
+      .note {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .kbd {
+        font-family: ui-monospace, Menlo, Consolas, monospace;
+        padding: 1px 6px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+        font-size: 11px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="frame" id="frame">
+        <div class="topbar">
+          <div class="title">
+            <h1>电子玫瑰经</h1>
+            <div class="sub" id="subline">
+              按今日映射自动选择奥迹；点击圆按钮推进。
+            </div>
+          </div>
+          <div class="actions">
+            <button class="icon-btn" id="btnReset" title="重置进度">
+              重置
+            </button>
+            <button class="icon-btn" id="btnSettings" title="编辑 JSON 配置">
+              设置
+            </button>
+          </div>
+        </div>
+
+        <div class="center">
+          <button class="rosary-btn" id="rosaryBtn" aria-label="下一段">
+            <div class="btn-label" id="btnLabel">下一段</div>
+          </button>
+
+          <div class="progress" id="progressWrap">
+            <div class="meta">
+              <div id="progressText">0/0</div>
+              <div id="progressPct">0%</div>
+            </div>
+            <div class="bar"><div id="progressBar"></div></div>
+          </div>
+        </div>
+
+        <div class="tooltip" id="tooltip">
+          <div class="tt-head">
+            <div class="tt-title" id="ttTitle">经文</div>
+            <button class="tt-pin" id="ttPin">固定</button>
+          </div>
+          <div class="tt-body" id="ttBody"></div>
+        </div>
+
+        <!-- 右下角：可动态显示1或2个 pill -->
+        <div class="pos" id="posArea">
+          <div class="pill clickable" id="posPrimary"></div>
+          <div
+            class="pill clickable"
+            id="posSecondary"
+            style="display: none"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Modal（挂到 body，避免裁切） -->
+    <div class="modal-mask" id="modalMask" role="dialog" aria-modal="true">
+      <div class="modal">
+        <div class="m-head">
+          <div class="m-title">配置（JSON）</div>
+          <button class="btn" id="btnCloseModal">关闭</button>
+        </div>
+        <div class="m-body">
+          <div class="note">
+            说明：系统会将配置与进度存储在本地浏览器
+            <span class="kbd">localStorage</span
+            >。你可在此自定义颜色、经文、星期映射、以及“补充经文（法蒂玛/圣母无染原罪）”。<br />
+            快捷键：<span class="kbd">Esc</span> 关闭；<span class="kbd"
+              >Ctrl</span
+            >
+            + <span class="kbd">Enter</span> 保存并应用。
+          </div>
+          <textarea id="configEditor" spellcheck="false"></textarea>
+          <div class="m-row">
+            <button class="btn" id="btnValidate">校验 JSON</button>
+            <button class="btn" id="btnExport">导出 JSON</button>
+            <button class="btn" id="btnImport">导入 JSON</button>
+            <button class="btn" id="btnDefault">恢复默认</button>
+            <button class="btn primary" id="btnSaveApply">保存并应用</button>
+          </div>
+          <div class="note" id="validateMsg"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        /** =========================
+         *  默认配置（可在“设置”里修改）
+         *  ========================= */
+        const DEFAULT_CONFIG = {
+          version: 2,
+          settings: {
+            storageKey: "rosary_v2",
+            ui: {
+              showProgressBar: true,
+              containerMaxWidth: 560,
+            },
+            // 0=周日 ... 6=周六
+            // 常见映射：周一/周六=欢喜；周二/周五=痛苦；周三/周日=荣福；周四=光明
+            weekdayMysteryMap: {
+              0: "glorious",
+              1: "joyful",
+              2: "sorrowful",
+              3: "glorious",
+              4: "luminous",
+              5: "sorrowful",
+              6: "joyful",
+            },
+            // 是否把“宣告奥迹”作为一步（默想阶段）
+            includeMysteryAnnouncementStep: true,
+
+            // “补充经文”选择：fatima / immaculate / none
+            decadeClosingPrayer: "fatima",
+
+            // 末尾行为：最后一步“完成”后，再点击弹窗确认是否重来
+            endBehavior: {
+              confirmRestartAfterComplete: true,
+            },
+          },
+
+          theme: {
+            colors: {
+              signOfCross: "#60a5fa",
+              creed: "#4C6FFF",
+              ourFather: "#00A389",
+              hailMary: "#D96CFF",
+              gloryBe: "#F5A623",
+              mystery: "#7B8A8B",
+              fatima: "#FF6B6B",
+              immaculate: "#38bdf8",
+              hailHolyQueen: "#8E7BFF",
+              complete: "#22c55e",
+            },
+          },
+
+          mysteries: {
+            joyful: {
+              name: "欢喜奥迹",
+              decades: ["第一端", "第二端", "第三端", "第四端", "第五端"],
+              topics: [
+                "圣母领报（天使报喜）\n到了第六个月，天使加俾额尔奉天主差遣，往加里肋亚一座名叫纳匝肋的城去，到一位童贞女那里，她已与达味家族中一个名叫若瑟的男子订了婚，童贞女的名字叫玛利亚。（路1:26-27）\n天使向玛利亚报喜，揭开「时期圆满」（迦4:4）的序幕，就是恩许的实现和准备工作的完成。〔《天主教教理》(1992)，484条〕",
+                "圣母往见圣妇依撒伯尔（圣母访亲）\n玛利亚就在那几日起身，急速往山区去，到了犹大的一座城。她进了匝加利亚的家，就给依撒伯尔请安。依撒伯尔一听到玛利亚请安，胎儿就在她的腹中欢跃。依撒伯尔遂充满了圣神，大声呼喊说：「在女人中你是蒙祝福的，你的胎儿也是蒙祝福的。」（路1:39-42）\n玛利亚对依撒伯尔的「探访」，成了「天主对自己百姓的眷顾」。〔《天主教教理》(1992)，717条〕",
+                "耶稣基督降生（耶稣诞生）\n那时，凯撒奥古斯都出了一道上谕，叫天下的人都要登记：这是在季黎诺作叙利亚总督时，首次的登记。于是，众人各去本城登记。若瑟因为是达味家族的人，也从加里肋亚纳匝肋城，上犹大名叫白冷的达味城去，好同自己已怀孕的聘妻玛利亚去登记。他们在那里的时候，玛利亚分娩的日期满了，便生了她的头胎男儿，用襁褓裹起，放在马槽里，因为在客栈中为他们没有地方。（路2:1-7）\n耶稣生于贫苦的家庭、在一个卑微和简陋的马槽中诞生；纯朴的牧人就是这事的首批见证人。在这样的贫穷环境中，天主的光荣显示了出来。〔《天主教教理》(1992)，525条〕",
+                "圣母献耶稣于圣殿（献耶稣于圣殿）\n满了八天，孩子应受割损，遂给他起名叫耶稣，这是他降孕母胎前，由天使所起的。按梅瑟的法律，一满了他们取洁的日期，他们便带着孩子上耶路撒冷去献给上主，就如上主的法律上所记载的：『凡开胎首生的男性，应祝圣于上主。』并该照上主法律上所吩咐的，献上祭物：一对斑鸠或两只雏鸽。（路2:21-24）\n耶稣于诞生后第八天所受的割损礼，乃表明他隶属亚巴郎的后裔、隶属盟约的子民，并服从法律。〔《天主教教理》(1992)，527条〕",
+                "耶稣十二龄讲道（耶稣在圣殿讲道）\n耶稣的父母每年逾越节都往耶路撒冷去。耶稣到了十二岁时，他们又照节日的惯例上去了。过完了节日，他们回去的时候，孩童耶稣却留在耶路撒冷，他的父母并未发觉。他们只以为他在同行的人中间，遂走了一天的路程；以后就在亲戚和相识的人中寻找他。既找不着，便折回耶路撒冷找他。过了三天，才在圣殿里找到了他。他正坐在经师中，聆听他们，也询问他们。凡听见他的人，对他的智慧和对答，都惊奇不止。（路2:41-47）\n「耶稣十二龄讲道」（在圣殿中寻回耶稣）的事件，打破了福音中有关耶稣隐居生活的缄默。在这事上，耶稣使人略微看到他那完全献身于「天主子」的使命：「你们不知道我必须在我父亲那里吗？」（路2:49）玛利亚和若瑟「不明白」他的话，但以信德接受了，而玛利亚则「把这一切默存在心中」（路2:51）。〔《天主教教理》(1992)，534条〕",
+              ],
+            },
+            sorrowful: {
+              name: "痛苦奥迹",
+              decades: ["第一端", "第二端", "第三端", "第四端", "第五端"],
+              topics: [
+                "耶稣山园祈祷\n耶稣同他们来到一个名叫革责玛尼的庄园里，便对门徒说：「你们坐在这里，等我到那边去祈祷。」遂带了伯多禄和载伯德的两个儿子同去，开始忧闷恐怖起来，对他们说：「我的心灵忧闷得要死，你们留在这里同我一起醒寤吧！」他稍微前行，就俯首至地祈祷说：「我父，若是可能，就让这杯离开我吧！但不要照我，而要照你所愿意的。」（玛26:36-39）\n这样的战斗和胜利，只有在祈祷中才能达到。耶稣在传教之初，以及在山园祈祷的最后战斗，都是以祈祷战胜诱惑。〔《天主教教理》(1992)，2849条〕",
+                "耶稣受鞭打之刑\n比拉多命人把耶稣带去鞭打了。然后兵士们用荆棘编了个茨冠，放在他头上，给他披上一件紫红袍，来到他跟前说：「犹太人的君王，万岁！」并给他耳光。（若19:1-3）\n耶稣的苦难是具体的历史事实：他曾被「长老、司祭长和经师弃绝」（谷8:31），他们并把他「交给外邦人戏弄、鞭打及钉死」（玛20:19）。〔《天主教教理》(1992)，572条〕",
+                "耶稣受茨冠之苦辱\n总督的兵士把耶稣带到总督府内，召集了全队围着他，脱去了他的衣服，给他披上一件紫红色的外氅；又用荆棘编了一个茨冠，戴在他头上，拿一根芦苇放在他右手里；然后跪在他前，戏弄他说：「犹太人的君王，万岁！」（玛27:27-29）\n耶稣服从至死，藉此完成了受苦仆人对他人罪过的承担，他「牺牲了自己的性命，作了赎罪祭」并「承担大众的罪过，使多人成义，因为他承担了他们的罪过」。耶稣赔补了我们的过错并为我们的罪向父作了赔偿。 〔《天主教教理》(1992)，616条〕 〕",
+                "耶稣背十字架上山\n有一个基勒乃人西满，是亚历山大和鲁富的父亲，他从田间来，正路过那里，他们就强迫他背耶稣的十字架。他们将耶稣带到哥耳哥达，解说「髑髅」的地方。（谷15:21-22）\n耶稣接受死亡，为赎人罪；「他在自己身上，亲自承担我们的罪过，而上了木架」（伯前2:24）。〔《天主教教理》(1992)，612条〕",
+                "耶稣十字架上死\n他们既到了那名叫髑髅的地方，就在那里把耶稣钉在十字架上；也钉了那两个凶犯：一个在右边，一个在左边。耶稣说：「父啊，宽赦他们吧！因为他们不知道他们做的是什么。」……大约是第六时辰，遍地都昏黑了，直到第九时辰。太阳失去了光，圣所的帐幔从中间裂开，耶稣大声呼喊说：「父啊！我把我的灵魂交托在你手中。」说完这话，便断了气。（路23:33-46）\n「基督照经上记载的，为我们的罪死了」（格前15:3）。〔《天主教教理》(1992)，619条〕",
+              ],
+            },
+            glorious: {
+              name: "荣福奥迹",
+              decades: ["第一端", "第二端", "第三端", "第四端", "第五端"],
+              topics: [
+                "耶稣复活\n一周的第一天，天还很早，妇女们便携带预备下的香料，来到坟墓那里，见石头已由墓穴滚开了。她们进去，不见了主耶稣的遗体。她们正为此事疑虑的时候，忽然有两个人，穿着耀目的衣服，站在她们身边。她们都害怕，遂把脸垂向地上，那两个人对她们说：「你们为什么在死人中找活人呢？他不在这里了，他已复活了。你们应当记得：他还在加里肋亚时，怎样告诉过你们。」（路24:1-6）\n假如基督没有复活，那么，我们的宣讲便是空的，你们的信仰也是空的」（格前15:14）。复活首先确认基督所行和所教的一切。〔《天主教教理》(1992)，651条〕",
+                "耶稣升天\n主耶稣给他们说了这些话以后，就被接升天，坐在天主的右边。（谷16:19）\n这最后一个阶段，跟第一个阶段，即道成人身自天降下的阶段，有密切的联系。只有「出自父的」基督，才能「回到父」那里去。〔《天主教教理》(1992)，661条〕",
+                "圣神降临\n五旬节日一到，众人都聚集一处。忽然，从天上来了一阵响声，好像暴风刮来，充满了他们所在的全座房屋。有些散开好像火的舌头，停留在他们每人头上，众人都充满了圣神，照圣神赐给他们的话，说起外方话来。（宗2:1-4）\n「圣神」与「圣父」和「圣子」，同受钦崇，同享光荣。教会从主那里领受了圣神，并在她新生子女的洗礼中宣认「圣神」的名号（参阅玛28:19）。〔《天主教教理》(1992)，691条〕",
+                "圣母蒙召升天\n因为祂垂顾了他婢女的卑微，今后万世万代都要称我有福；因全能者在我身上行了大事，祂的名字是圣的。（路1:48-49）\n荣福童贞玛利亚在结束其尘世生命后，她的身体和灵魂一同被提升到天上的荣耀中，她在那里已分享她圣子复活的光荣，成为基督奥体所有肢体复活的先声。〔《天主教教理》(1992)，974条〕",
+                "天主光荣圣母\n天上出现了一个大异兆：有一个女人，身披太阳，脚踏月亮，头戴十二颗星的荣冠。（默12:1）\n「最后，被保护未染原罪瑕疵的无玷童贞玛利亚，在结束了人间生活的过程后，身体灵魂一同荣召升天，被上主擢升为宇宙之后，使她与她的圣子，即那征服罪恶与死亡的万君之主，更形相似」。荣福童贞玛利亚的升天，是奇妙地分享圣子的复活，也是其它基督徒复活的先声。〔《天主教教理》(1992)，966条〕",
+              ],
+            },
+            luminous: {
+              name: "光明奥迹",
+              decades: ["第一端", "第二端", "第三端", "第四端", "第五端"],
+              topics: [
+                "耶稣在约旦河受洗\n耶稣受洗后，立时从水里上来，忽然天为他开了。他看见天主圣神有如鸽子降下，来到他上面；又有声音由天上说：「这是我的爱子，我所喜悦的」（玛3:16-17） \n耶稣的公开生活，是他在约但河接受若翰施洗时开始的。……圣神藉鸽子的形象，停在耶稣身上，「并有声音从天上」说：「这是我的爱子」。这显示出耶稣是以色列的默西亚和天主子。〔《天主教教理》(1992)，535条〕",
+                "耶稣参加加纳婚宴\n第三天，在加里肋亚加纳有婚宴，耶稣的母亲在那里；耶稣和他的门徒也被请去参加婚宴。酒缺了，耶稣的母亲向他说：「他们没有酒了。」耶稣回答说：「女人，这于我和你有什么关系？我的时刻尚未来到。」他的母亲给仆役说：「他无论吩咐你们什么，你们就作什么。」（若2:1-5）",
+                "耶稣宣讲天国福音\n「时期已满，天主的国临近了，你们悔改，信从福音罢！」（谷1:15）\n所有人都被召进入天国。这默西亚的神国，首先宣告给以色列子民，并为接纳天下万民而建立的。为能进去，人必须接受耶稣的训诲。〔《天主教教理》(1992)，543条〕",
+                "耶稣大博尔山显容\n六天以后，耶稣带着伯多禄，雅各伯和他的兄弟若望，单独带领他们上了一座高山，在他们面前变了容貌：他的面貌发光有如太阳，他的衣服洁白如光。（玛17:1-2）\n耶稣只短暂地显露了他的圣容，以确定伯多禄所宣认的信仰。但同时也宣示：「为进入他的光荣」（路24:26），必须先经过耶路撒冷的十字架。〔《天主教教理》(1992)，555条〕",
+                "耶稣建立圣体圣事\n他们正吃晚餐的时候，耶稣拿起饼来，祝福了，擘开，递给门徒说：「你们拿去吃吧！这是我的身体。」（玛26:26）\n耶稣命令我们要重复他的行动和话语，「直到他再来」。这命令不但要求我们怀念耶稣及他所做的一切，且是针对由宗徒和他们的继承人，所举行的礼仪庆典，以纪念基督、他的生活、他的死亡和复活、以及他在父前的代祷。〔《天主教教理》(1992)，1341条〕",
+              ],
+            },
+          },
+
+          // 可选：每端圣母经可用不同 token
+          decadeHailMaryColorTokens: [
+            "hailMary",
+            "hailMary",
+            "hailMary",
+            "hailMary",
+            "hailMary",
+          ],
+
+          prayers: {
+            signOfCross: "因父、及子、及圣神之名。阿们",
+            creed:
+              "我信全能的天主父，天地万物的创造者。\n我信父的唯一子，我们的主耶稣基督。\n我信他因圣神降孕，由童贞玛利亚诞生。\n我信他在比拉多执政时蒙难，被钉在十字架上，死而安葬。\n我信他下降阴府，第三日从死者中复活。\n我信他升了天，坐在全能天主父的右边。\n我信他要从天降来，审判生者死者。\n我信圣神，我信圣而公教会，诸圣的相通。\n我信罪过的赦免，我信肉身的复活，我信永恒的生命。\n阿们。",
+            ourFather:
+              "我们的天父，\n愿你的名受显扬；\n愿你的国来临；\n愿你的旨意奉行在人间，如同在天上。\n求你今天赏给我们日用的食粮；\n求你宽恕我们的罪过，如同我们宽恕别人一样；\n不要让我们陷于诱惑；但救我们免于凶恶。\n阿们",
+            hailMary:
+              "万福玛利亚，你充满圣宠，主与你同在。\n你在妇女中受赞颂，你的亲子耶稣同受赞颂。\n天主圣母玛利亚，求你现在和我们临终时，为我们罪人祈求天主。\n阿们。",
+            gloryBe:
+              "愿光荣归于父、及子、及圣神；\n起初如何，今日亦然，直到永远。\n阿们",
+            fatima:
+              "吾主耶稣，请宽赦我们的罪过，救我们于永火之中。求祢把众人的灵魂，特别是那些需要祢怜悯的灵魂，领到天国里去。",
+            immaculate: "吁玛利亚无染原罪之始胎，我等奔尔台前，望尔为我等祈。",
+            hailHolyQueen:
+              "母后万福！仁慈的母亲，我们的生命，我们的甘饴，我们的希望。\n厄娃子孙，在此尘世，向您哀呼。在这涕泣之谷，向您叹息哭求。\n我们的主保，求您回顾，怜视我们。\n一旦流亡期满，使我们得见您的圣子、万民称颂的耶稣。\n童贞玛利亚，您是宽仁的、慈悲的、甘饴的。\n天主圣母，请为我们祈求，使我们堪受基督的恩许。\n阿们。",
+            complete: "完成：\n今日玫瑰经已完成。愿主赐平安。",
+          },
+        };
+
+        /** =========================
+         *  工具函数
+         *  ========================= */
+        function deepClone(obj) {
+          return JSON.parse(JSON.stringify(obj));
+        }
+
+        function safeParseJSON(str) {
+          try {
+            return { ok: true, value: JSON.parse(str) };
+          } catch (e) {
+            return { ok: false, error: e };
+          }
+        }
+
+        function tokenColor(cfg, token) {
+          const m = cfg.theme && cfg.theme.colors ? cfg.theme.colors : {};
+          return m[token] || "#4C6FFF";
+        }
+
+        function colorFromSpec(cfg, colorSpec) {
+          if (!colorSpec) return tokenColor(cfg, "creed");
+          if (typeof colorSpec === "string") return colorSpec;
+          if (colorSpec.type === "hex") return colorSpec.value;
+          if (colorSpec.type === "token")
+            return tokenColor(cfg, colorSpec.value);
+          return tokenColor(cfg, "creed");
+        }
+
+        function setButtonColor(color) {
+          document.documentElement.style.setProperty("--btn-color", color);
+        }
+
+        function storageKeys(cfg) {
+          const base =
+            cfg.settings && cfg.settings.storageKey
+              ? cfg.settings.storageKey
+              : "rosary_v2";
+          return {
+            cfg: base + "::config",
+            idx: base + "::index",
+            pinned: base + "::pinned",
+          };
+        }
+
+        /** =========================
+         *  步骤生成（包含：开头十字圣号、补齐3圣母+光荣、结尾十字圣号、完成）
+         *  ========================= */
+        function weekdayMysterySet(cfg, date) {
+          const map =
+            cfg.settings && cfg.settings.weekdayMysteryMap
+              ? cfg.settings.weekdayMysteryMap
+              : {};
+          const day = String(date.getDay());
+          return map[day] || "joyful";
+        }
+
+        function makeStep({
+          id,
+          label,
+          text,
+          color,
+          // 阶段控制：
+          // phase: "nonMystery" | "mysteryMeditation" | "mysteryLoop"
+          phase = "nonMystery",
+          // mystery meta（仅奥迹阶段需要）
+          mysterySetKey = null,
+          mysterySetName = null,
+          decadeIndex = null,
+          decadeName = null,
+          decadeTopic = null,
+          // 展示辅助（用于第二pill只显示经名）
+          shortPrayerName = null,
+        }) {
+          return {
+            id,
+            label,
+            text,
+            color,
+            phase,
+            mysterySetKey,
+            mysterySetName,
+            decadeIndex,
+            decadeName,
+            decadeTopic,
+            shortPrayerName,
+          };
+        }
+
+        function buildSteps(cfg, date) {
+          const steps = [];
+          const setKey = weekdayMysterySet(cfg, date);
+          const set =
+            cfg.mysteries && cfg.mysteries[setKey]
+              ? cfg.mysteries[setKey]
+              : null;
+
+          const setName = set ? set.name : "奥迹";
+          const decades = set
+            ? set.decades
+            : ["第一端", "第二端", "第三端", "第四端", "第五端"];
+          const topics = set ? set.topics || [] : [];
+
+          // 开头（非奥迹）
+          steps.push(
+            makeStep({
+              id: "intro-sign",
+              label: "十字圣号",
+              shortPrayerName: "十字圣号",
+              text: cfg.prayers.signOfCross,
+              color: { type: "token", value: "signOfCross" },
+              phase: "nonMystery",
+            })
+          );
+
+          steps.push(
+            makeStep({
+              id: "intro-creed",
+              label: "信经",
+              shortPrayerName: "信经",
+              text: cfg.prayers.creed,
+              color: { type: "token", value: "creed" },
+              phase: "nonMystery",
+            })
+          );
+
+          // 信经后应有：天主经 + 3遍圣母经 + 光荣经
+          steps.push(
+            makeStep({
+              id: "intro-ourfather",
+              label: "天主经",
+              shortPrayerName: "天主经",
+              text: cfg.prayers.ourFather,
+              color: { type: "token", value: "ourFather" },
+              phase: "nonMystery",
+            })
+          );
+
+          for (let i = 1; i <= 3; i++) {
+            steps.push(
+              makeStep({
+                id: `intro-hailmary-${i}`,
+                label: `圣母经 ${i}/3`,
+                shortPrayerName: "圣母经",
+                text: cfg.prayers.hailMary,
+                color: { type: "token", value: "hailMary" },
+                phase: "nonMystery",
+              })
+            );
+          }
+
+          steps.push(
+            makeStep({
+              id: "intro-glorybe",
+              label: "光荣经",
+              shortPrayerName: "光荣经",
+              text: cfg.prayers.gloryBe,
+              color: { type: "token", value: "gloryBe" },
+              phase: "nonMystery",
+            })
+          );
+
+          // 奥迹五端
+          for (let d = 0; d < 5; d++) {
+            const decadeName = decades[d] || `第${d + 1}端`;
+            const decadeTopic = topics[d] || "";
+
+            // 宣告奥迹（默想阶段：只显示一个 pill）
+            if (cfg.settings.includeMysteryAnnouncementStep) {
+              const label = `${setName}${decadeName} · 宣告奥迹`;
+              const infoText =
+                `${setName}${decadeName}\n` +
+                (decadeTopic ? `主题：${decadeTopic}\n` : "") +
+                `（你可在设置中填写每端主题 topics[]，并在此展示更完整的默想信息）`;
+
+              steps.push(
+                makeStep({
+                  id: `mystery-${setKey}-${d + 1}-announce`,
+                  label,
+                  text: infoText,
+                  color: { type: "token", value: "mystery" },
+                  phase: "mysteryMeditation",
+                  mysterySetKey: setKey,
+                  mysterySetName: setName,
+                  decadeIndex: d,
+                  decadeName,
+                  decadeTopic,
+                })
+              );
+            }
+
+            // 循环阶段：右下角显示两个 pill（左：奥迹端信息；右：经名）
+            steps.push(
+              makeStep({
+                id: `mystery-${setKey}-${d + 1}-ourfather`,
+                label: `${setName}${decadeName} · 天主经`,
+                shortPrayerName: "天主经",
+                text: cfg.prayers.ourFather,
+                color: { type: "token", value: "ourFather" },
+                phase: "mysteryLoop",
+                mysterySetKey: setKey,
+                mysterySetName: setName,
+                decadeIndex: d,
+                decadeName,
+                decadeTopic,
+              })
+            );
+
+            const decadeHmTokens = Array.isArray(cfg.decadeHailMaryColorTokens)
+              ? cfg.decadeHailMaryColorTokens
+              : [];
+            const hmToken = decadeHmTokens[d] || "hailMary";
+
+            for (let j = 1; j <= 10; j++) {
+              steps.push(
+                makeStep({
+                  id: `mystery-${setKey}-${d + 1}-hailmary-${j}`,
+                  label: `${setName}${decadeName} · 圣母经 ${j}/10`,
+                  shortPrayerName: `圣母经 ${j}/10`,
+                  text: cfg.prayers.hailMary,
+                  color: { type: "token", value: hmToken },
+                  phase: "mysteryLoop",
+                  mysterySetKey: setKey,
+                  mysterySetName: setName,
+                  decadeIndex: d,
+                  decadeName,
+                  decadeTopic,
+                })
+              );
+            }
+
+            steps.push(
+              makeStep({
+                id: `mystery-${setKey}-${d + 1}-glorybe`,
+                label: `${setName}${decadeName} · 光荣经`,
+                shortPrayerName: "光荣经",
+                text: cfg.prayers.gloryBe,
+                color: { type: "token", value: "gloryBe" },
+                phase: "mysteryLoop",
+                mysterySetKey: setKey,
+                mysterySetName: setName,
+                decadeIndex: d,
+                decadeName,
+                decadeTopic,
+              })
+            );
+
+            // 补充经文二选一（或无）
+            const choice = cfg.settings.decadeClosingPrayer || "fatima";
+            if (choice === "fatima") {
+              steps.push(
+                makeStep({
+                  id: `mystery-${setKey}-${d + 1}-closing-fatima`,
+                  label: `${setName}${decadeName} · 补充经文（法蒂玛）`,
+                  shortPrayerName: "法蒂玛",
+                  text: cfg.prayers.fatima,
+                  color: { type: "token", value: "fatima" },
+                  phase: "mysteryLoop",
+                  mysterySetKey: setKey,
+                  mysterySetName: setName,
+                  decadeIndex: d,
+                  decadeName,
+                  decadeTopic,
+                })
+              );
+            } else if (choice === "immaculate") {
+              steps.push(
+                makeStep({
+                  id: `mystery-${setKey}-${d + 1}-closing-immaculate`,
+                  label: `${setName}${decadeName} · 补充经文（圣母无染原罪）`,
+                  shortPrayerName: "圣母无染原罪",
+                  text: cfg.prayers.immaculate,
+                  color: { type: "token", value: "immaculate" },
+                  phase: "mysteryLoop",
+                  mysterySetKey: setKey,
+                  mysterySetName: setName,
+                  decadeIndex: d,
+                  decadeName,
+                  decadeTopic,
+                })
+              );
+            }
+          }
+
+          // 结尾（非奥迹）：又圣母经 -> 十字圣号 -> 完成
+          steps.push(
+            makeStep({
+              id: "outro-hailholyqueen",
+              label: "又圣母经",
+              shortPrayerName: "又圣母经",
+              text: cfg.prayers.hailHolyQueen,
+              color: { type: "token", value: "hailHolyQueen" },
+              phase: "nonMystery",
+            })
+          );
+
+          steps.push(
+            makeStep({
+              id: "outro-sign",
+              label: "十字圣号",
+              shortPrayerName: "十字圣号",
+              text: cfg.prayers.signOfCross,
+              color: { type: "token", value: "signOfCross" },
+              phase: "nonMystery",
+            })
+          );
+
+          steps.push(
+            makeStep({
+              id: "complete",
+              label: "完成",
+              shortPrayerName: "完成",
+              text: cfg.prayers.complete,
+              color: { type: "token", value: "complete" },
+              phase: "nonMystery",
+            })
+          );
+
+          return { setKey, setName, steps };
+        }
+
+        /** =========================
+         *  UI & 交互
+         *  ========================= */
+        const el = {
+          frame: document.getElementById("frame"),
+          subline: document.getElementById("subline"),
+          rosaryBtn: document.getElementById("rosaryBtn"),
+          btnLabel: document.getElementById("btnLabel"),
+
+          progressWrap: document.getElementById("progressWrap"),
+          progressText: document.getElementById("progressText"),
+          progressPct: document.getElementById("progressPct"),
+          progressBar: document.getElementById("progressBar"),
+
+          tooltip: document.getElementById("tooltip"),
+          ttTitle: document.getElementById("ttTitle"),
+          ttBody: document.getElementById("ttBody"),
+          ttPin: document.getElementById("ttPin"),
+
+          posPrimary: document.getElementById("posPrimary"),
+          posSecondary: document.getElementById("posSecondary"),
+
+          btnSettings: document.getElementById("btnSettings"),
+          btnReset: document.getElementById("btnReset"),
+
+          modalMask: document.getElementById("modalMask"),
+          btnCloseModal: document.getElementById("btnCloseModal"),
+          configEditor: document.getElementById("configEditor"),
+          btnValidate: document.getElementById("btnValidate"),
+          btnExport: document.getElementById("btnExport"),
+          btnImport: document.getElementById("btnImport"),
+          btnDefault: document.getElementById("btnDefault"),
+          btnSaveApply: document.getElementById("btnSaveApply"),
+          validateMsg: document.getElementById("validateMsg"),
+        };
+
+        let cfg = deepClone(DEFAULT_CONFIG);
+        let steps = [];
+        let stepIndex = 0;
+
+        // tooltip
+        let tooltipPinned = false;
+        // tooltip 当前显示内容来源："primary" | "secondary"
+        let tooltipSource = "primary";
+
+        // 今日奥迹信息
+        let meta = { setKey: "", setName: "" };
+
+        function applyContainerWidth() {
+          const w = cfg.settings?.ui?.containerMaxWidth;
+          if (typeof w === "number" && w > 300) {
+            el.frame.style.width = `min(${w}px, 92vw)`;
+          } else {
+            el.frame.style.width = `min(560px, 92vw)`;
+          }
+        }
+
+        function updateProgressUI() {
+          const total = steps.length;
+          const showBar = !!cfg.settings?.ui?.showProgressBar;
+          el.progressWrap.style.display = showBar ? "flex" : "none";
+          if (!total) {
+            el.progressText.textContent = "0/0";
+            el.progressPct.textContent = "0%";
+            el.progressBar.style.width = "0%";
+            return;
+          }
+          const currentHuman = Math.min(stepIndex + 1, total);
+          const pct = Math.round((currentHuman / total) * 100);
+          el.progressText.textContent = `${currentHuman}/${total}`;
+          el.progressPct.textContent = `${pct}%`;
+          el.progressBar.style.width = `${pct}%`;
+        }
+
+        function currentStep() {
+          if (!steps.length) return null;
+          if (stepIndex < 0) stepIndex = 0;
+          if (stepIndex >= steps.length) stepIndex = steps.length - 1;
+          return steps[stepIndex];
+        }
+
+        function makeMysteryInfoText(s) {
+          if (!s || !s.mysterySetName || s.decadeIndex == null) return "";
+          const base = `${s.mysterySetName}${
+            s.decadeName || "第" + (s.decadeIndex + 1) + "端"
+          }`;
+          const topic = s.decadeTopic ? `主题：${s.decadeTopic}\n` : "";
+          return `${base}\n${topic}`.trim();
+        }
+
+        function setTooltipContent(title, body) {
+          el.ttTitle.textContent = title || "";
+          el.ttBody.textContent = body || "";
+        }
+
+        function showTooltip(force) {
+          if (force || tooltipPinned) {
+            el.tooltip.classList.add("show");
+          }
+        }
+        function hideTooltip() {
+          if (!tooltipPinned) el.tooltip.classList.remove("show");
+        }
+        function setPinned(v) {
+          tooltipPinned = v;
+          el.ttPin.textContent = tooltipPinned ? "取消固定" : "固定";
+          const keys = storageKeys(cfg);
+          localStorage.setItem(keys.pinned, tooltipPinned ? "1" : "0");
+          if (tooltipPinned) el.tooltip.classList.add("show");
+          else el.tooltip.classList.remove("show");
+        }
+
+        function renderStep() {
+          const s = currentStep();
+          if (!s) {
+            el.btnLabel.textContent = "无步骤";
+            el.posPrimary.textContent = "无";
+            el.posSecondary.style.display = "none";
+            setButtonColor(tokenColor(cfg, "creed"));
+            setTooltipContent("无", "");
+            updateProgressUI();
+            return;
+          }
+
+          // 按步骤配色
+          setButtonColor(colorFromSpec(cfg, s.color));
+
+          // 中央按钮提示：最后一步完成后点击会弹窗重来
+          el.btnLabel.textContent = s.id === "complete" ? "完成" : "下一段";
+
+          // 右下角显示逻辑（你提出的 4.1/4.2/4.3）
+          // - nonMystery：只显示一个 pill（当前位置），tooltip 显示该经文
+          // - mysteryMeditation：只显示一个 pill（宣告奥迹），tooltip 显示奥迹信息
+          // - mysteryLoop：显示两个 pill（左：奥迹端信息；右：经名），tooltip 对应不同内容
+          if (s.phase === "nonMystery") {
+            el.posPrimary.textContent = s.label;
+            el.posSecondary.style.display = "none";
+
+            // 默认 tooltip 内容：经文
+            tooltipSource = "primary";
+            setTooltipContent(s.label, s.text || "");
+          } else if (s.phase === "mysteryMeditation") {
+            // 只显示一个：宣告奥迹
+            el.posPrimary.textContent = s.label;
+            el.posSecondary.style.display = "none";
+
+            tooltipSource = "primary";
+            const info = makeMysteryInfoText(s) || s.text || "";
+            setTooltipContent(s.label, info);
+          } else {
+            // mysteryLoop
+            // 左：奥迹端信息（悬浮/点击显示奥迹信息）
+            const leftLabel = `${s.mysterySetName || meta.setName}${
+              s.decadeName || ""
+            }`.trim();
+            el.posPrimary.textContent = leftLabel || s.mysterySetName || "奥迹";
+
+            // 右：只显示经名
+            el.posSecondary.style.display = "block";
+            el.posSecondary.textContent = s.shortPrayerName || "经文";
+
+            // 默认 tooltip：右侧经文（更符合“当前经名查看经文”）
+            tooltipSource = "secondary";
+            setTooltipContent(s.shortPrayerName || s.label, s.text || "");
+          }
+
+          updateProgressUI();
+          saveProgress();
+        }
+
+        function refreshSubline() {
+          const d = new Date();
+          const wk = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"][
+            d.getDay()
+          ];
+          el.subline.textContent = `${wk} · 自动选择：${meta.setName}`;
+        }
+
+        function loadConfig() {
+          const keys = storageKeys(DEFAULT_CONFIG);
+          const raw = localStorage.getItem(keys.cfg);
+          if (!raw) return deepClone(DEFAULT_CONFIG);
+          const parsed = safeParseJSON(raw);
+          if (!parsed.ok) return deepClone(DEFAULT_CONFIG);
+          const c = parsed.value;
+          if (!c || typeof c !== "object") return deepClone(DEFAULT_CONFIG);
+          return c;
+        }
+
+        function saveConfig(newCfg) {
+          const keys = storageKeys(newCfg);
+          localStorage.setItem(keys.cfg, JSON.stringify(newCfg, null, 2));
+        }
+
+        function loadProgress() {
+          const keys = storageKeys(cfg);
+          const idx = parseInt(localStorage.getItem(keys.idx) || "0", 10);
+          const pinned = localStorage.getItem(keys.pinned) === "1";
+          return { idx: Number.isFinite(idx) ? idx : 0, pinned };
+        }
+
+        function saveProgress() {
+          const keys = storageKeys(cfg);
+          localStorage.setItem(keys.idx, String(stepIndex));
+        }
+
+        function validateConfig(candidate) {
+          const errors = [];
+          if (!candidate || typeof candidate !== "object")
+            errors.push("配置不是对象。");
+          if (!candidate.settings) errors.push("缺少 settings。");
+          if (!candidate.theme || !candidate.theme.colors)
+            errors.push("缺少 theme.colors。");
+          if (!candidate.prayers) errors.push("缺少 prayers（经文库）。");
+          if (!candidate.mysteries) errors.push("缺少 mysteries（奥迹定义）。");
+          if (candidate.settings && candidate.settings.weekdayMysteryMap) {
+            const m = candidate.settings.weekdayMysteryMap;
+            for (let i = 0; i <= 6; i++) {
+              const v = m[String(i)];
+              if (!v) errors.push(`weekdayMysteryMap 缺少键 "${i}"。`);
+            }
+          } else {
+            errors.push("缺少 settings.weekdayMysteryMap。");
+          }
+          const dp = candidate.settings?.decadeClosingPrayer;
+          if (dp && !["fatima", "immaculate", "none"].includes(dp)) {
+            errors.push(
+              `settings.decadeClosingPrayer 仅支持 "fatima" | "immaculate" | "none"，当前为 "${dp}"。`
+            );
+          }
+          return errors;
+        }
+
+        function rebuild() {
+          applyContainerWidth();
+          const built = buildSteps(cfg, new Date());
+          meta = { setKey: built.setKey, setName: built.setName };
+          steps = built.steps;
+
+          if (stepIndex >= steps.length)
+            stepIndex = Math.max(steps.length - 1, 0);
+          if (stepIndex < 0) stepIndex = 0;
+
+          refreshSubline();
+          renderStep();
+        }
+
+        function advance() {
+          if (!steps.length) return;
+          const s = currentStep();
+          const lastIdx = steps.length - 1;
+
+          // 最后一步：完成 -> 再点询问重来
+          if (s && s.id === "complete") {
+            if (cfg.settings?.endBehavior?.confirmRestartAfterComplete) {
+              const ok = window.confirm("今日玫瑰经已完成。是否从头开始？");
+              if (ok) {
+                stepIndex = 0;
+                renderStep();
+              }
+            } else {
+              stepIndex = 0;
+              renderStep();
+            }
+            return;
+          }
+
+          if (stepIndex >= lastIdx) {
+            stepIndex = lastIdx;
+            renderStep();
+            return;
+          }
+          stepIndex += 1;
+          renderStep();
+        }
+
+        function resetProgress(withConfirm) {
+          if (withConfirm) {
+            const ok = window.confirm("确认重置进度并从十字圣号开始？");
+            if (!ok) return;
+          }
+          stepIndex = 0;
+          renderStep();
+        }
+
+        /** =========================
+         *  事件
+         *  ========================= */
+        el.rosaryBtn.addEventListener("click", advance);
+
+        // 右下角 pill：hover 显示 tooltip；点击切换 pin（移动端兼容）
+        function bindPill(pillEl, which) {
+          pillEl.addEventListener("mouseenter", () => {
+            // hover 时切换 tooltip 内容来源
+            const s = currentStep();
+            if (!s) return;
+
+            tooltipSource = which;
+
+            if (s.phase === "mysteryLoop") {
+              if (which === "primary") {
+                const infoTitle = `${s.mysterySetName || meta.setName}${
+                  s.decadeName || ""
+                }`.trim();
+                const infoBody = makeMysteryInfoText(s) || "";
+                setTooltipContent(infoTitle || "奥迹", infoBody);
+              } else {
+                setTooltipContent(s.shortPrayerName || s.label, s.text || "");
+              }
+            } else if (s.phase === "mysteryMeditation") {
+              setTooltipContent(
+                s.label,
+                makeMysteryInfoText(s) || s.text || ""
+              );
+            } else {
+              setTooltipContent(s.label, s.text || "");
+            }
+
+            showTooltip(true);
+          });
+
+          pillEl.addEventListener("mouseleave", hideTooltip);
+
+          pillEl.addEventListener("click", () => {
+            // 点击时也先切换内容，再 pin/unpin
+            const s = currentStep();
+            if (!s) return;
+
+            tooltipSource = which;
+
+            if (s.phase === "mysteryLoop") {
+              if (which === "primary") {
+                const infoTitle = `${s.mysterySetName || meta.setName}${
+                  s.decadeName || ""
+                }`.trim();
+                const infoBody = makeMysteryInfoText(s) || "";
+                setTooltipContent(infoTitle || "奥迹", infoBody);
+              } else {
+                setTooltipContent(s.shortPrayerName || s.label, s.text || "");
+              }
+            } else if (s.phase === "mysteryMeditation") {
+              setTooltipContent(
+                s.label,
+                makeMysteryInfoText(s) || s.text || ""
+              );
+            } else {
+              setTooltipContent(s.label, s.text || "");
+            }
+
+            setPinned(!tooltipPinned);
+          });
+        }
+
+        bindPill(el.posPrimary, "primary");
+        bindPill(el.posSecondary, "secondary");
+
+        el.ttPin.addEventListener("click", () => setPinned(!tooltipPinned));
+
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            if (el.modalMask.classList.contains("show")) {
+              closeModal();
+              return;
+            }
+            if (tooltipPinned) setPinned(false);
+            else hideTooltip();
+          }
+        });
+
+        // Modal
+        function openModal() {
+          el.validateMsg.textContent = "";
+          el.configEditor.value = JSON.stringify(cfg, null, 2);
+          el.modalMask.classList.add("show");
+          el.configEditor.focus();
+        }
+        function closeModal() {
+          el.modalMask.classList.remove("show");
+        }
+        el.btnSettings.addEventListener("click", openModal);
+        el.btnCloseModal.addEventListener("click", closeModal);
+        el.modalMask.addEventListener("click", (e) => {
+          if (e.target === el.modalMask) closeModal();
+        });
+
+        el.configEditor.addEventListener("keydown", (e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+            e.preventDefault();
+            saveApplyFromEditor();
+          }
+        });
+
+        el.btnValidate.addEventListener("click", () => {
+          const parsed = safeParseJSON(el.configEditor.value);
+          if (!parsed.ok) {
+            el.validateMsg.textContent =
+              "JSON 解析失败：" + parsed.error.message;
+            return;
+          }
+          const errs = validateConfig(parsed.value);
+          el.validateMsg.textContent = errs.length
+            ? "校验失败：\n- " + errs.join("\n- ")
+            : "校验通过。";
+        });
+
+        function saveApplyFromEditor() {
+          const parsed = safeParseJSON(el.configEditor.value);
+          if (!parsed.ok) {
+            el.validateMsg.textContent =
+              "JSON 解析失败：" + parsed.error.message;
+            return;
+          }
+          const errs = validateConfig(parsed.value);
+          if (errs.length) {
+            el.validateMsg.textContent = "校验失败：\n- " + errs.join("\n- ");
+            return;
+          }
+          cfg = parsed.value;
+          saveConfig(cfg);
+
+          // 切换 storageKey 后，读取新 key 下的进度与 pin
+          const p = loadProgress();
+          stepIndex = Math.max(0, p.idx || 0);
+          setPinned(!!p.pinned);
+
+          rebuild();
+          el.validateMsg.textContent = "已保存并应用。";
+        }
+
+        el.btnSaveApply.addEventListener("click", saveApplyFromEditor);
+
+        el.btnDefault.addEventListener("click", () => {
+          const ok = window.confirm(
+            "确认恢复默认配置？（会覆盖你当前的自定义 JSON）"
+          );
+          if (!ok) return;
+          cfg = deepClone(DEFAULT_CONFIG);
+          saveConfig(cfg);
+          stepIndex = 0;
+          setPinned(false);
+          rebuild();
+          el.configEditor.value = JSON.stringify(cfg, null, 2);
+          el.validateMsg.textContent = "已恢复默认配置。";
+        });
+
+        el.btnExport.addEventListener("click", () => {
+          const data = el.configEditor.value;
+          const blob = new Blob([data], {
+            type: "application/json;charset=utf-8",
+          });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "rosary_config.json";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+          el.validateMsg.textContent = "已导出 rosary_config.json。";
+        });
+
+        el.btnImport.addEventListener("click", () => {
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = ".json,application/json";
+          input.onchange = () => {
+            const file = input.files && input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+              el.configEditor.value = String(reader.result || "");
+              el.validateMsg.textContent = "已导入到编辑器（尚未保存应用）。";
+            };
+            reader.readAsText(file, "utf-8");
+          };
+          input.click();
+        });
+
+        el.btnReset.addEventListener("click", () => resetProgress(true));
+
+        /** =========================
+         *  启动
+         *  ========================= */
+        function boot() {
+          cfg = loadConfig();
+          const p = loadProgress();
+          stepIndex = Math.max(0, p.idx || 0);
+          tooltipPinned = !!p.pinned;
+          el.ttPin.textContent = tooltipPinned ? "取消固定" : "固定";
+          if (tooltipPinned) el.tooltip.classList.add("show");
+
+          rebuild();
+
+          // 初始 tooltip 内容：随当前步骤渲染
+          const s = currentStep();
+          if (s) {
+            if (s.phase === "mysteryLoop") {
+              setTooltipContent(s.shortPrayerName || s.label, s.text || "");
+            } else if (s.phase === "mysteryMeditation") {
+              setTooltipContent(
+                s.label,
+                makeMysteryInfoText(s) || s.text || ""
+              );
+            } else {
+              setTooltipContent(s.label, s.text || "");
+            }
+          }
+        }
+
+        boot();
+      })();
+    </script>
+  </body>
+</html>
