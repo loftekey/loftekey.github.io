@@ -1,42 +1,362 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+:root {
+  --bg: #0b1220;
+  --text: #e9eefc;
+  --muted: #b8c1e6;
+  --border: rgba(255, 255, 255, 0.12);
+  --shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+  --radius: 18px;
+  --btn-size: 140px;
+  --btn-color: #4c6fff;
+}
+
+html, body {
+  height: 100%;
+  background:
+    radial-gradient(1200px 800px at 20% 10%, rgba(76, 111, 255, 0.18), transparent 60%),
+    radial-gradient(1200px 800px at 80% 90%, rgba(217, 108, 255, 0.14), transparent 60%),
+    var(--bg);
+  color: var(--text);
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+}
+
+.wrap {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px 14px;
+  box-sizing: border-box;
+}
+
+.frame {
+  width: min(560px, 92vw);
+  min-height: 420px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+/* ── TopBar ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 6px 12px 6px;
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  line-height: 1.15;
+}
+.title h1 {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 650;
+  letter-spacing: 0.2px;
+}
+.title .sub {
+  font-size: 12px;
+  color: var(--muted);
+  opacity: 0.95;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: transform 0.06s ease, background 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+}
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.icon-btn:active {
+  transform: translateY(1px);
+}
+
+/* ── RosaryButton ── */
+.center {
+  display: grid;
+  place-items: center;
+  padding: 28px 0 10px 0;
+}
+
+.rosary-btn {
+  width: var(--btn-size);
+  height: var(--btn-size);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,0.25), transparent 35%),
+    radial-gradient(circle at 55% 65%, rgba(0,0,0,0.25), transparent 55%),
+    var(--btn-color);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.45), inset 0 0 0 6px rgba(255,255,255,0.06);
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.08s ease, filter 0.2s ease;
+  user-select: none;
+  outline: none;
+}
+.rosary-btn:hover {
+  filter: brightness(1.05);
+}
+.rosary-btn:active {
+  transform: translateY(2px) scale(0.99);
+}
+
+.rosary-btn .btn-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
   text-align: center;
+  padding: 14px;
+  box-sizing: border-box;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.25);
+  font-size: 14px;
+  line-height: 1.15;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+/* ── ProgressIndicator ── */
+.progress {
+  width: min(420px, 86%);
+  margin: 18px auto 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.progress .meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--muted);
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.bar {
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
 }
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
+.bar > div {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, rgba(255,255,255,0.26), rgba(255,255,255,0.1));
+  border-right: 1px solid rgba(255,255,255,0.22);
+  transition: width 0.22s ease;
 }
 
-.read-the-docs {
-  color: #888;
+/* ── PositionPills ── */
+.pos {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100% - 28px);
+  z-index: 3;
+}
+.pill {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 12px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  cursor: default;
+  user-select: none;
+}
+.pill.clickable {
+  cursor: pointer;
+}
+
+/* ── PrayerTooltip ── */
+.tooltip {
+  position: absolute;
+  right: 14px;
+  bottom: 64px;
+  width: min(520px, calc(100% - 28px));
+  max-height: 240px;
+  border: 1px solid var(--border);
+  background: rgba(15, 27, 51, 0.92);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  box-shadow: 0 18px 48px rgba(0,0,0,0.55);
+  padding: 12px 12px 10px 12px;
+  box-sizing: border-box;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 4;
+}
+.tooltip.show {
+  display: flex;
+}
+.tooltip .tt-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.tooltip .tt-title {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 75%;
+}
+.tooltip .tt-pin {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.tooltip .tt-body {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  overflow: auto;
+  padding-right: 4px;
+  white-space: pre-wrap;
+}
+
+/* ── Settings Modal ── */
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.modal-mask.show {
+  display: flex;
+}
+.modal {
+  width: min(780px, 100%);
+  max-height: min(90vh, 860px);
+  background: rgba(15, 27, 51, 0.96);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.modal .m-head {
+  padding: 14px 14px 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 10px;
+  flex: 0 0 auto;
+}
+.modal .m-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin: 0;
+}
+.modal .m-body {
+  padding: 12px 14px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: auto;
+  flex: 1 1 auto;
+}
+textarea {
+  width: 100%;
+  min-height: 320px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  color: var(--text);
+  padding: 10px;
+  box-sizing: border-box;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.45;
+  outline: none;
+}
+.m-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+}
+.btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  padding: 9px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: transform 0.06s ease, background 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+}
+.btn:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn.primary {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(76, 111, 255, 0.22);
+}
+.note {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.kbd {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  padding: 1px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  font-size: 11px;
 }
